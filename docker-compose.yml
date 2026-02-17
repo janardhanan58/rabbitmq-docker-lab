@@ -1,0 +1,26 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq-broker
+    ports:
+      - "5672:5672"   # Messaging port
+      - "15672:15672" # Management UI port
+    networks:
+      - mq-network
+
+  app:
+    build: .
+    container_name: python-app
+    environment:
+      - BROKER_URL=rabbitmq
+    depends_on:
+      - rabbitmq
+    networks:
+      - mq-network
+
+networks:
+  mq-network:
+    driver: bridge
+
+volumes:
+  rabbit_data:
