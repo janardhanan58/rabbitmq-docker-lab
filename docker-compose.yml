@@ -22,7 +22,7 @@ services:
       - rabbit_data:/var/lib/rabbitmq
   app:
     build: .
-    container_name: python-app
+    # container_name: python-app
     environment:
       - BROKER_URL=rabbitmq
       - RABBIT_USER=admin
