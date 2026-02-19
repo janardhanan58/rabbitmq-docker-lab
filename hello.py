@@ -5,7 +5,14 @@ import time
 # Get the broker address from the environment variable we set in Compose
 broker_host = os.getenv("BROKER_URL", "localhost")
 
-print(f"Connecting to RabbitMQ at {broker_host}...")
+# Get user/pass from environment, or use defaults
+user = os.getenv("RABBIT_USER", "guest")
+password = os.getenv("RABBIT_PASS", "guest")
+
+print(f"Connecting to RabbitMQ at {broker_host} as user {user}...")
+
+credentials = pika.PlainCredentials(user, password)
+parameters = pika.ConnectionParameters(host=broker_host, credentials=credentials)
 
 # Middleware logic: Retry until the broker is ready
 while True:

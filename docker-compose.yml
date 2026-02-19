@@ -2,9 +2,7 @@ services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq-broker
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=supersecret
+    hostname: rabbit-server
     ports:
       - "5672:5672"   # Messaging port
       - "15672:15672" # Management UI port
@@ -15,12 +13,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5 
-
+    environment:
+      # FIXED: Using the correct internal RabbitMQ variable names
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=supersecret
+      - RABBITMQ_NODENAME=rabbit@rabbitmq
+    volumes:
+      - rabbit_data:/var/lib/rabbitmq
   app:
     build: .
     container_name: python-app
     environment:
       - BROKER_URL=rabbitmq
+      - RABBIT_USER=admin
+      - RABBIT_PASS=supersecret
     depends_on:
       - rabbitmq
     networks:
@@ -32,6 +38,5 @@ networks:
 
 volumes:
   rabbit_data:
-
 
 
